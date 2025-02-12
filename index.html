@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Surprise</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff758c, #ff7eb3);
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        /* Navbar styling */
+        .navbar {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        /* Heart floating animation */
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(2.5); opacity: 0; }
+        }
+
+        .heart {
+            position: absolute;
+            color: #8b0000;
+            font-size: 100px;
+            animation: floatHeart 10s linear infinite;
+            cursor: pointer;
+            user-select: none;
+            opacity: 0.9;
+        }
+
+        .message {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            color: #ff3b6b;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: scale(0.5);
+            pointer-events: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .heart {
+                font-size: 60px; /* Smaller hearts on tablets and mobile */
+                animation-duration: 12s; /* Slower animation on smaller screens */
+            }
+
+            .message {
+                font-size: 1rem; /* Adjust message font size for mobile */
+                padding: 8px 12px;
+            }
+
+            .navbar {
+                font-size: 1.2rem; /* Adjust navbar font size for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .heart {
+                font-size: 50px; /* Even smaller hearts on mobile */
+                animation-duration: 14s; /* Slower animation on very small screens */
+            }
+
+            .message {
+                font-size: 2rem; /* Adjust message font size for smaller screens */
+                padding: 3px 5px;
+            }
+
+            .navbar {
+                font-size: 1rem; /* Further adjust navbar font size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        Click on the heart for a cute message ❤️
+    </div>
+
+    <audio id="clickSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
+    <script>
+        const messages = [
+            "You make my heart skip a beat! ❤️",
+            "You are the reason for my smile 😊",
+            "Every moment with you is special! 💖",
+            "Love is in the air, and so are you in my heart! 💘",
+            "You are my sunshine on a cloudy day ☀️",
+            "You mean the world to me! 🌍💕",
+            "Together, we create magic! ✨",
+            "You're sweeter than chocolates! 🍫💕",
+            "You're my heart's favorite melody 🎶❤️",
+            "Every day with you feels like a dream come true ✨💭",
+            "You light up my world like nobody else 🌟💖",
+            "You're the missing piece that completes my puzzle 🧩❤️",
+            "You're my happily ever after 💫💍",
+            "My love for you grows stronger each day 🌹❤️",
+            "You're the reason my heart beats faster 💓💖",
+            "Being with you is the best adventure of my life 🌍🌟",
+            "With you, every moment feels like a fairy tale 🏰💖",
+            "You're my forever and always 🌸💞",
+            "In your arms, I find my home 🏡❤️",
+            "You're the dream I never want to wake up from 🌙💖",
+            "Every kiss from you feels like magic ✨💋",
+            "I’m lost in your love, and I never want to be found 💘🌹",
+            "You complete my heart in ways I never knew possible ❤️💍",
+            "Every glance from you melts my heart 💓",
+            "You make the ordinary extraordinary 🌟💖",
+            "You are the reason my heart sings 🎶❤️",
+            "You're the love story I never want to end 📖💞",
+            "You’re the best part of my every day 💖",
+            "You're the one I want to grow old with 🌅💑",
+            "You make my world a better place 💖🌍",
+            "You are my greatest adventure 🛤️💘",
+            "You’re my moon and stars 🌙✨",
+            "Every moment with you is worth a lifetime 💞",
+            "You make everything brighter, especially my life ☀️💖",
+            "You're the love I've been searching for 💘✨",
+            "Together, we are unstoppable 🔥💖",
+            "My heart is your home 🏡💖",
+            "You are the joy I never knew I needed 🎉💖",
+            "You fill my life with love and laughter 😂💖",
+            "Your love is my greatest treasure 💎❤️",
+            "I’m so grateful to have you in my life 🙏💖",
+            "You are the reason my heart smiles 😊💖",
+            "With you, every day feels like a celebration 🎉💘",
+            "You are my once in a lifetime ❤️✨",
+            "You hold the key to my heart 🗝️💖",
+            "Your love is my greatest blessing 🙏💘",
+            "You are the light in my darkest days 🌟💖",
+            "You make my life so much sweeter 🍯💖",
+            "You're the best part of my soul 💫💖",
+            "I can't imagine my life without you 💖",
+            "You are the best decision I’ve ever made 💍💘",
+            "You're my favorite hello and hardest goodbye 💞",
+            "You make my heart race with love 💓💨",
+            "Every day with you is a dream come true 🌟💖",
+            "You’re my favorite person in the world 🌍💖",
+            "You’re the love that makes everything else seem small 💖",
+            "You’re the heartbeat of my world 💖❤️",
+            "You are my forever and beyond 💍💖",
+        ];
+
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.innerHTML = "❤️";
+            heart.classList.add("heart");
+
+            // Random Positioning across the screen horizontally
+            const leftPosition = Math.random() * window.innerWidth;
+            heart.style.left = `${leftPosition}px`;
+            heart.style.bottom = "-30px"; // Starting below the viewport
+            heart.style.fontSize = `${Math.random() * 50 + 80}px`; /* Adjust size for randomness */
+            heart.style.animationDuration = `${Math.random() * 4 + 6}s`; /* Slower floating speed */
+
+            heart.addEventListener("click", (event) => showMessage(event, heart));
+            document.body.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 10000); /* Extended heart removal duration */
+        }
+
+        function showMessage(event, heart) {
+            const messageBox = document.createElement("div");
+            messageBox.classList.add("message");
+            messageBox.innerText = messages[Math.floor(Math.random() * messages.length)];
+
+            document.body.appendChild(messageBox); // Append first before setting positions
+            
+            // Get position of clicked heart
+            const rect = heart.getBoundingClientRect();
+            messageBox.style.left = `${rect.left + window.scrollX}px`;
+            messageBox.style.top = `${rect.top + window.scrollY}px`;
+
+            // Show message with a pop effect
+            setTimeout(() => {
+                messageBox.style.opacity = "1";
+                messageBox.style.transform = "scale(1)";
+            }, 50);
+
+            // Play sound
+            document.getElementById("clickSound").play();
+
+            // Hide message after 2 seconds
+            setTimeout(() => {
+                messageBox.style.opacity = "0";
+                messageBox.style.transform = "scale(0.5)";
+                setTimeout(() => messageBox.remove(), 500);
+            }, 2000);
+
+            // Remove the clicked heart
+            heart.remove();
+        }
+
+        setInterval(createHeart, 300); // Creating hearts at an interval
+    </script>
+</body>
+</html>
